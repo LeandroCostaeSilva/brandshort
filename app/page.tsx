@@ -10,7 +10,7 @@ export default function Home() {
   const [shortenedUrl, setShortenedUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [origin, setOrigin] = useState('https://brandshort.com.br');
+  const [origin, setOrigin] = useState('https://www.brandshort.com.br');
 
   // Detectar se está rodando localmente (localhost ou IP local) para permitir testes funcionais
   useEffect(() => {
@@ -113,7 +113,7 @@ export default function Home() {
         </h1>
 
         <p className="max-w-2xl text-zinc-400 text-lg sm:text-xl leading-relaxed mb-12">
-          Substitua links genéricos e suspeitos como <strong>bit.ly/3x8f2d</strong> por endereços confiáveis com seu domínio próprio <strong>brandshort.com.br/promo</strong>. Ganhe autoridade e controle.
+          Substitua links genéricos e suspeitos como <strong>bit.ly/3x8f2d</strong> por endereços confiáveis com seu domínio próprio <strong>www.brandshort.com.br/promo</strong>. Ganhe autoridade e controle.
         </p>
 
         {/* MOCK INTERATIVO DO ENCURTADOR */}

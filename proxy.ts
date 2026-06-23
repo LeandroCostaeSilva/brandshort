@@ -55,8 +55,13 @@ export function proxy(request: NextRequest) {
     appDomainHost = new URL(process.env.NEXT_PUBLIC_APP_DOMAIN || 'https://app.brandshort.com.br').hostname;
   } catch {}
 
-  const isShortDomain = cleanHost === shortDomainHost || cleanHost === `www.${shortDomainHost}`;
-  const isAppDomain = cleanHost === appDomainHost || cleanHost === `www.${appDomainHost}`;
+  // Normalizar removendo o prefixo www. para comparação robusta
+  const hostWithoutWww = cleanHost.replace(/^www\./i, '');
+  const shortDomainWithoutWww = shortDomainHost.replace(/^www\./i, '');
+  const appDomainWithoutWww = appDomainHost.replace(/^www\./i, '');
+
+  const isShortDomain = hostWithoutWww === shortDomainWithoutWww;
+  const isAppDomain = hostWithoutWww === appDomainWithoutWww;
 
   // 1. REGRAS PARA O DOMÍNIO CURTO (brandshort.com.br)
   if (isShortDomain) {
