@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BrandShort - Encurtador de Link com Marca Própria
+
+Este é um projeto [Next.js](https://nextjs.org) bootstrapped com [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) configurado para deploy em produção no Vercel com domínio próprio e proxy white-label.
 
 ## Getting Started
 
@@ -18,7 +20,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load fonts.
 
 ## Learn More
 
