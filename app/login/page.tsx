@@ -236,6 +236,21 @@ function LoginForm() {
               </div>
             </div>
 
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold transition-all shadow-md shadow-violet-600/10 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-2"
+            >
+              {isLoading ? (
+                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <span>{isSignUp ? 'Criar Conta' : 'Entrar'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+
             {showDemoButton && (
               <button
                 type="button"
