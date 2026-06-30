@@ -178,7 +178,14 @@ export default function Home() {
               <div className="mt-6 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 animate-fadeIn">
                 <div className="flex-1 min-w-0">
                   <div className="text-xs text-zinc-500 mb-1 font-medium">Seu Link Curto de Marca:</div>
-                  <div className="text-violet-400 font-semibold font-mono break-all">{shortenedUrl}</div>
+                  <a
+                    href={shortenedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-violet-400 font-semibold font-mono break-all hover:underline hover:text-violet-300 transition-colors"
+                  >
+                    {shortenedUrl}
+                  </a>
                 </div>
                 <div className="flex gap-2">
                   <button

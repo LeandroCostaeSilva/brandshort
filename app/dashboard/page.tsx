@@ -673,7 +673,14 @@ export default function Dashboard() {
             {createdLink && (
               <div className="mt-4 p-4 bg-violet-600/10 border border-violet-500/20 rounded-xl text-xs animate-fadeIn space-y-2">
                 <div className="text-[10px] font-semibold text-violet-400 uppercase tracking-wider">Link encurtado!</div>
-                <div className="text-zinc-200 font-mono font-semibold select-all break-all">{createdLink}</div>
+                <a
+                    href={createdLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-zinc-200 font-mono font-semibold break-all hover:underline hover:text-violet-300 transition-colors"
+                  >
+                    {createdLink}
+                  </a>
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(createdLink);
