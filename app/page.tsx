@@ -240,40 +240,114 @@ export default function Home() {
             <div className="relative z-10 flex flex-col md:flex-row items-center gap-10 p-8 md:p-12">
 
               {/* Lado esquerdo: mockup QR Code */}
-              <div className="shrink-0 flex flex-col items-center gap-3">
-                {/* Card QR Code mockup */}
-                <div className="relative">
-                  <div className="w-44 h-44 bg-white rounded-2xl shadow-xl shadow-violet-500/20 p-3.5 flex flex-col items-center justify-center gap-2">
-                    {/* QR code simulado com grid CSS */}
-                    <div className="w-full grid grid-cols-7 gap-[2.5px]">
-                      {[
-                        1,1,1,0,1,1,1,
-                        1,0,1,0,1,0,1,
-                        1,1,1,0,1,1,1,
-                        0,1,0,1,0,1,0,
-                        1,1,0,1,0,1,1,
-                        0,1,1,0,1,0,1,
-                        1,0,1,1,1,1,1,
-                      ].map((cell, i) => (
-                        <div
-                          key={i}
-                          className={`aspect-square rounded-[1px] ${cell ? 'bg-zinc-900' : 'bg-transparent'}`}
-                        />
-                      ))}
+              <div className="shrink-0 flex flex-col items-center gap-3.5">
+                <div className="relative group">
+                  {/* Card QR Code mockup */}
+                  <div className="relative w-48 h-56 bg-white rounded-3xl shadow-2xl shadow-violet-500/10 p-4.5 flex flex-col items-center justify-between border border-zinc-100/80 overflow-hidden">
+                    {/* Linha laser animada de escaneamento */}
+                    <div className="absolute left-4.5 right-4.5 h-0.5 bg-gradient-to-r from-transparent via-violet-500 to-transparent shadow-[0_0_10px_#8b5cf6,0_0_4px_#a855f7] animate-scan pointer-events-none z-10" style={{ top: '18px' }} />
+
+                    {/* QR Code SVG premium */}
+                    <svg viewBox="0 0 100 100" className="w-36 h-36 text-zinc-900 transition-transform duration-500 group-hover:scale-[1.02]" fill="currentColor">
+                      {/* Top-Left Finder */}
+                      <rect x="0" y="0" width="28" height="28" rx="6" />
+                      <rect x="4" y="4" width="20" height="20" rx="4" fill="white" />
+                      <rect x="8" y="8" width="12" height="12" rx="2" />
+
+                      {/* Top-Right Finder */}
+                      <rect x="72" y="0" width="28" height="28" rx="6" />
+                      <rect x="76" y="4" width="20" height="20" rx="4" fill="white" />
+                      <rect x="80" y="8" width="12" height="12" rx="2" />
+
+                      {/* Bottom-Left Finder */}
+                      <rect x="0" y="72" width="28" height="28" rx="6" />
+                      <rect x="4" y="76" width="20" height="20" rx="4" fill="white" />
+                      <rect x="8" y="80" width="12" height="12" rx="2" />
+
+                      {/* Dados / Módulos do QR code com visual arredondado premium */}
+                      <rect x="34" y="2" width="6" height="6" rx="2" />
+                      <rect x="44" y="2" width="6" height="6" rx="2" />
+                      <rect x="54" y="2" width="6" height="6" rx="2" />
+                      <rect x="62" y="8" width="6" height="6" rx="2" />
+                      
+                      <rect x="34" y="12" width="6" height="6" rx="2" />
+                      <rect x="44" y="12" width="14" height="6" rx="2" />
+                      <rect x="62" y="18" width="6" height="14" rx="2" />
+
+                      <rect x="34" y="22" width="6" height="6" rx="2" />
+                      <rect x="44" y="22" width="6" height="6" rx="2" />
+
+                      {/* Meio horizontal */}
+                      <rect x="2" y="34" width="6" height="6" rx="2" />
+                      <rect x="12" y="34" width="6" height="6" rx="2" />
+                      <rect x="22" y="34" width="14" height="6" rx="2" />
+                      <rect x="44" y="34" width="6" height="6" rx="2" />
+                      <rect x="54" y="34" width="14" height="6" rx="2" />
+                      <rect x="72" y="34" width="6" height="6" rx="2" />
+                      <rect x="82" y="34" width="16" height="6" rx="2" />
+
+                      <rect x="2" y="44" width="14" height="6" rx="2" />
+                      <rect x="22" y="44" width="6" height="6" rx="2" />
+                      <rect x="72" y="44" width="6" height="6" rx="2" />
+                      <rect x="82" y="44" width="16" height="6" rx="2" />
+
+                      <rect x="2" y="54" width="6" height="6" rx="2" />
+                      <rect x="12" y="54" width="6" height="6" rx="2" />
+                      <rect x="22" y="54" width="6" height="6" rx="2" />
+                      <rect x="34" y="54" width="14" height="6" rx="2" />
+                      <rect x="54" y="54" width="6" height="6" rx="2" />
+                      <rect x="62" y="54" width="14" height="6" rx="2" />
+                      <rect x="82" y="54" width="6" height="14" rx="2" />
+
+                      <rect x="34" y="64" width="6" height="6" rx="2" />
+                      <rect x="44" y="64" width="6" height="6" rx="2" />
+                      <rect x="54" y="64" width="14" height="6" rx="2" />
+                      <rect x="72" y="64" width="6" height="6" rx="2" />
+
+                      {/* Parte inferior */}
+                      <rect x="34" y="74" width="6" height="6" rx="2" />
+                      <rect x="44" y="74" width="14" height="6" rx="2" />
+                      <rect x="62" y="74" width="6" height="6" rx="2" />
+                      <rect x="72" y="74" width="6" height="6" rx="2" />
+                      <rect x="82" y="74" width="16" height="6" rx="2" />
+
+                      <rect x="34" y="84" width="14" height="6" rx="2" />
+                      <rect x="54" y="84" width="6" height="6" rx="2" />
+                      <rect x="62" y="84" width="6" height="6" rx="2" />
+                      <rect x="72" y="84" width="6" height="6" rx="2" />
+                      <rect x="82" y="84" width="6" height="6" rx="2" />
+                      <rect x="92" y="84" width="6" height="6" rx="2" />
+
+                      {/* Círculo com Logo central */}
+                      <circle cx="50" cy="50" r="14" fill="white" />
+                      <circle cx="50" cy="50" r="11" fill="#7c3aed" />
+                      
+                      {/* Ícone de link no centro */}
+                      <path 
+                        d="M48 45.5 a2 2 0 0 0-2.8 2.8 l1 1 a0.7 0.7 0 0 0 1-1 l-1-1 a0.6 0.6 0 0 1 0.8-0.8 l1.8 1.8 a0.6 0.6 0 0 1 0 0.8 l-1 1 a0.7 0.7 0 0 0 1 1 l1-1 a2 2 0 0 0 0-2.8 Z 
+                           M52 48.5 a0.7 0.7 0 0 0-1 0 l-1 1 a0.7 0.7 0 0 0 1 1 l1-1 a0.6 0.6 0 0 1 0.8 0.8 l-1.8 1.8 a0.6 0.6 0 0 1-0.8 0 l-1-1 a0.7 0.7 0 0 0-1 1 l1 1 a2 2 0 0 0 2.8-2.8 Z" 
+                        fill="white" 
+                      />
+                    </svg>
+
+                    <div className="w-full flex flex-col items-center gap-1 mt-1">
+                      <div className="w-full h-px bg-zinc-100/80" />
+                      <span className="text-[10px] font-bold text-zinc-500 font-mono tracking-tight text-center leading-none">
+                        brandshort.com.br
+                      </span>
+                      <span className="text-[9px] font-medium text-violet-600 font-mono tracking-tight text-center leading-none mt-0.5">
+                        /sua-promo
+                      </span>
                     </div>
-                    <div className="w-full h-px bg-zinc-200 my-0.5" />
-                    <span className="text-[8px] font-bold text-zinc-400 font-mono tracking-tight text-center leading-tight">
-                      brandshort.com.br<br />/sua-promo
-                    </span>
                   </div>
 
-                  {/* Badge "GRÁTIS" */}
-                  <span className="absolute -top-2.5 -right-2.5 px-2 py-0.5 bg-gradient-to-r from-violet-600 to-indigo-500 text-white text-[9px] font-black rounded-full shadow-md tracking-wide">
+                  {/* Badge "GRÁTIS" com visual mais moderno */}
+                  <span className="absolute -top-2.5 -right-2.5 px-3 py-1 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-[10px] font-black rounded-full shadow-lg shadow-violet-500/30 tracking-wider border border-white/20 select-none animate-pulse-subtle">
                     GRÁTIS
                   </span>
 
                   {/* Glow sob o card */}
-                  <div className="absolute inset-0 rounded-2xl bg-violet-400/20 blur-xl -z-10 scale-90 translate-y-2" />
+                  <div className="absolute inset-0 rounded-3xl bg-violet-500/15 blur-xl -z-10 scale-90 translate-y-3 group-hover:scale-95 group-hover:bg-violet-500/25 transition-all duration-500" />
                 </div>
 
                 {/* Ícone de scan */}
@@ -282,6 +356,7 @@ export default function Home() {
                   <span>Aponte a câmera e acesse</span>
                 </div>
               </div>
+
 
               {/* Lado direito: texto e CTA */}
               <div className="flex-1 text-center md:text-left">

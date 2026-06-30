@@ -82,3 +82,18 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* Animação do Scanner de QR Code */
+@keyframes scan {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(140px);
+  }
+}
+
+.animate-scan {
+  animation: scan 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
