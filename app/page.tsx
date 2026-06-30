@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Link2, Shield, BarChart3, Globe, Zap, Check, Sparkles, Copy, QrCode } from 'lucide-react';
+import { ArrowRight, Link2, Shield, BarChart3, Globe, Zap, Check, Sparkles, Copy, QrCode, Smartphone, Download, BarChart2, Infinity } from 'lucide-react';
 
 export default function Home() {
   const [longUrl, setLongUrl] = useState('');
@@ -10,9 +10,11 @@ export default function Home() {
   const [shortenedUrl, setShortenedUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [origin, setOrigin] = useState('https://www.brandshort.com.br');
+  const [demoError, setDemoError] = useState('');
+  const [origin, setOrigin] = useState(
+    process.env.NEXT_PUBLIC_SHORT_DOMAIN || 'https://www.brandshort.com.br'
+  );
 
-  // Detectar se está rodando localmente (localhost ou IP local) para permitir testes funcionais
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
@@ -22,38 +24,37 @@ export default function Home() {
     }
   }, []);
 
-
-
-  const handleMockShorten = (e: React.FormEvent) => {
+  const handleDemoShorten = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!longUrl) return;
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      const slug = customSlug || 'x9d8f3';
-      setShortenedUrl(`${origin}/${slug}`);
+    setDemoError('');
+    setShortenedUrl('');
 
-      // Salvar no localStorage para que a página 404 consiga redirecionar localmente no teste de desenvolvimento
-      try {
-        const demoLinks = JSON.parse(localStorage.getItem('brandshort_demo_links') || '[]');
-        const filtered = demoLinks.filter((l: any) => l.slug !== slug);
-        filtered.unshift({
-          id: `mock-${Date.now()}`,
-          slug,
-          original_url: longUrl,
-          title: 'Link de Teste Rápido',
-          is_active: true,
-          status: 'active',
-          is_deleted: false,
-          created_at: new Date().toISOString(),
-          clicks_count: 0
-        });
-        localStorage.setItem('brandshort_demo_links', JSON.stringify(filtered));
-      } catch (err) {
-        console.error('Erro ao salvar link demo localmente:', err);
+    try {
+      const response = await fetch('/api/demo-shorten', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          originalUrl: longUrl,
+          customSlug: customSlug.trim() || undefined,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setDemoError(data.error || 'Erro ao encurtar o link. Tente novamente.');
+        return;
       }
-    }, 800);
+
+      setShortenedUrl(`${origin}/${data.slug}`);
+    } catch {
+      setDemoError('Erro de conexão. Verifique sua internet e tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const copyToClipboard = () => {
@@ -116,21 +117,21 @@ export default function Home() {
           Substitua links genéricos e suspeitos como <strong>bit.ly/3x8f2d</strong> por endereços confiáveis com seu domínio próprio <strong>www.brandshort.com.br/promo</strong>. Ganhe autoridade e controle.
         </p>
 
-        {/* MOCK INTERATIVO DO ENCURTADOR */}
+        {/* ENCURTADOR DEMO (sem login) */}
         <div className="w-full max-w-2xl mx-auto mb-16">
           <div className="glass-panel p-6 rounded-2xl glow-purple text-left border border-white/10 shadow-2xl">
             <h3 className="text-sm font-semibold text-zinc-400 mb-4 flex items-center gap-2">
               <Zap className="w-4 h-4 text-violet-400" />
-              <span>Experimente na hora:</span>
+              <span>Experimente agora, sem criar conta:</span>
             </h3>
 
-            <form onSubmit={handleMockShorten} className="space-y-4">
+            <form onSubmit={handleDemoShorten} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-500 mb-1.5">URL Longa (limpe o campo antes de inserir o link)</label>
+                <label className="block text-xs font-medium text-zinc-500 mb-1.5">URL Longa</label>
                 <input
                   type="url"
                   value={longUrl}
-                  onChange={(e) => setLongUrl(e.target.value)}
+                  onChange={(e) => { setLongUrl(e.target.value); setDemoError(''); }}
                   placeholder="https://sua-pagina-longa.com/com-parametros-chatos"
                   required
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/50 rounded-xl outline-none text-sm text-zinc-200 transition-all font-mono"
@@ -150,12 +151,18 @@ export default function Home() {
                   <input
                     type="text"
                     value={customSlug}
-                    onChange={(e) => setCustomSlug(e.target.value)}
+                    onChange={(e) => { setCustomSlug(e.target.value); setDemoError(''); }}
                     placeholder="ex: promo"
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/50 rounded-xl outline-none text-sm text-zinc-200 transition-all font-mono"
                   />
                 </div>
               </div>
+
+              {demoError && (
+                <div className="px-4 py-3 bg-rose-500/10 border border-rose-500/20 text-rose-300 rounded-xl text-xs">
+                  {demoError}
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -173,49 +180,165 @@ export default function Home() {
               </button>
             </form>
 
-            {/* Resultado do Mock */}
+            {/* Resultado real */}
             {shortenedUrl && (
-              <div className="mt-6 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 animate-fadeIn">
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs text-zinc-500 mb-1 font-medium">Seu Link Curto de Marca:</div>
-                  <a
-                    href={shortenedUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-violet-400 font-semibold font-mono break-all hover:underline hover:text-violet-300 transition-colors"
-                  >
-                    {shortenedUrl}
-                  </a>
+              <div className="mt-6 pt-6 border-t border-white/5 space-y-3 animate-fadeIn">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-zinc-500 mb-1 font-medium">Seu Link Curto de Marca:</div>
+                    <a
+                      href={shortenedUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-violet-400 font-semibold font-mono break-all hover:underline hover:text-violet-300 transition-colors"
+                    >
+                      {shortenedUrl}
+                    </a>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={copyToClipboard}
+                      className="flex-1 sm:flex-initial px-4 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10 text-sm font-medium transition-all flex items-center justify-center gap-2"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="w-4 h-4 text-emerald-400" />
+                          <span className="text-emerald-400">Copiado</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4 text-zinc-400" />
+                          <span>Copiar</span>
+                        </>
+                      )}
+                    </button>
+                    <Link
+                      href="/login?signup=true"
+                      className="px-4 py-2.5 bg-violet-600/20 hover:bg-violet-600/30 text-violet-300 border border-violet-500/20 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2"
+                    >
+                      <QrCode className="w-4 h-4" />
+                      <span>Salvar no Painel</span>
+                    </Link>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={copyToClipboard}
-                    className="flex-1 sm:flex-initial px-4 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10 text-sm font-medium transition-all flex items-center justify-center gap-2"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-4 h-4 text-emerald-400" />
-                        <span className="text-emerald-400">Copiado</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4 text-zinc-400" />
-                        <span>Copiar</span>
-                      </>
-                    )}
-                  </button>
-                  <Link
-                    href="/login?signup=true"
-                    className="px-4 py-2.5 bg-violet-600/20 hover:bg-violet-600/30 text-violet-300 border border-violet-500/20 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2"
-                  >
-                    <QrCode className="w-4 h-4" />
-                    <span>Salvar no Painel</span>
-                  </Link>
-                </div>
+                <p className="text-[11px] text-zinc-600">
+                  Link demo válido por 24 horas. <Link href="/login?signup=true" className="text-violet-500 hover:text-violet-400 underline">Crie uma conta grátis</Link> para links permanentes e analytics.
+                </p>
               </div>
             )}
           </div>
         </div>
+
+        {/* ===== SEÇÃO QR CODE CTA ===== */}
+        <section className="w-full py-4 mb-8">
+          <div className="relative rounded-3xl overflow-hidden border border-violet-500/20 bg-gradient-to-br from-violet-950/60 via-zinc-900/80 to-indigo-950/60 shadow-2xl">
+
+            {/* Luzes internas */}
+            <div className="absolute top-[-30%] right-[-10%] w-[50%] h-[160%] bg-violet-600/10 blur-[80px] pointer-events-none rounded-full" />
+            <div className="absolute bottom-[-20%] left-[-5%] w-[40%] h-[100%] bg-indigo-500/10 blur-[60px] pointer-events-none rounded-full" />
+
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-10 p-8 md:p-12">
+
+              {/* Lado esquerdo: mockup QR Code */}
+              <div className="shrink-0 flex flex-col items-center gap-3">
+                {/* Card QR Code mockup */}
+                <div className="relative">
+                  <div className="w-44 h-44 bg-white rounded-2xl shadow-xl shadow-violet-500/20 p-3.5 flex flex-col items-center justify-center gap-2">
+                    {/* QR code simulado com grid CSS */}
+                    <div className="w-full grid grid-cols-7 gap-[2.5px]">
+                      {[
+                        1,1,1,0,1,1,1,
+                        1,0,1,0,1,0,1,
+                        1,1,1,0,1,1,1,
+                        0,1,0,1,0,1,0,
+                        1,1,0,1,0,1,1,
+                        0,1,1,0,1,0,1,
+                        1,0,1,1,1,1,1,
+                      ].map((cell, i) => (
+                        <div
+                          key={i}
+                          className={`aspect-square rounded-[1px] ${cell ? 'bg-zinc-900' : 'bg-transparent'}`}
+                        />
+                      ))}
+                    </div>
+                    <div className="w-full h-px bg-zinc-200 my-0.5" />
+                    <span className="text-[8px] font-bold text-zinc-400 font-mono tracking-tight text-center leading-tight">
+                      brandshort.com.br<br />/sua-promo
+                    </span>
+                  </div>
+
+                  {/* Badge "GRÁTIS" */}
+                  <span className="absolute -top-2.5 -right-2.5 px-2 py-0.5 bg-gradient-to-r from-violet-600 to-indigo-500 text-white text-[9px] font-black rounded-full shadow-md tracking-wide">
+                    GRÁTIS
+                  </span>
+
+                  {/* Glow sob o card */}
+                  <div className="absolute inset-0 rounded-2xl bg-violet-400/20 blur-xl -z-10 scale-90 translate-y-2" />
+                </div>
+
+                {/* Ícone de scan */}
+                <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
+                  <Smartphone className="w-3.5 h-3.5" />
+                  <span>Aponte a câmera e acesse</span>
+                </div>
+              </div>
+
+              {/* Lado direito: texto e CTA */}
+              <div className="flex-1 text-center md:text-left">
+                {/* Badge superior */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-500/15 border border-violet-500/25 text-[11px] font-semibold text-violet-300 mb-4">
+                  <QrCode className="w-3 h-3" />
+                  <span>Exclusivo para contas gratuitas</span>
+                </div>
+
+                <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
+                  QR Code instantâneo<br className="hidden sm:block" />
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-indigo-300"> para cada link.</span>
+                </h2>
+
+                <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-6 max-w-md">
+                  Conecte o mundo físico ao digital. Gere, baixe e compartilhe o QR Code de qualquer link encurtado — em impressões, embalagens, eventos ou redes sociais.
+                </p>
+
+                {/* Feature chips */}
+                <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-8">
+                  {[
+                    { icon: Download, label: 'Download em PNG' },
+                    { icon: BarChart2, label: 'Analytics por clique' },
+                    { icon: Infinity, label: 'Links ilimitados' },
+                    { icon: QrCode, label: 'QR por link' },
+                  ].map(({ icon: Icon, label }) => (
+                    <span
+                      key={label}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs font-medium text-zinc-300"
+                    >
+                      <Icon className="w-3.5 h-3.5 text-violet-400" />
+                      {label}
+                    </span>
+                  ))}
+                </div>
+
+                {/* CTAs */}
+                <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+                  <Link
+                    href="/login?signup=true"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-violet-600/25"
+                  >
+                    <span>Criar Conta Grátis</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white rounded-xl text-sm font-medium transition-all"
+                  >
+                    Já tenho uma conta
+                  </Link>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
 
         {/* Bento Grid de Funcionalidades */}
         <section className="w-full py-12 text-left">
