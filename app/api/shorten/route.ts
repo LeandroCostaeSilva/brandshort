@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerClient } from '@/lib/supabase';
 import { validateCustomSlug, isSlugAvailable, generateUniqueSlug } from '@/lib/slug';
+import { validateUrlSecurity } from '@/lib/security';
 
 export async function POST(req: Request) {
   try {
@@ -15,19 +16,18 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { originalUrl, customSlug, title, expiresAt } = body;
 
-    // 2. Validar URL original
-    if (!originalUrl) {
-      return NextResponse.json({ error: 'A URL original é obrigatória.' }, { status: 400 });
+    // Obtém o IP do cliente dos headers comuns
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || req.headers.get('x-real-ip') || undefined;
+
+    // 2. Validar URL original com a camada de segurança (HTTPS e Google Safe Browsing)
+    const securityCheck = await validateUrlSecurity(originalUrl, user.id, ip);
+    if (!securityCheck.isValid) {
+      return NextResponse.json(
+        { error: securityCheck.error },
+        { status: securityCheck.status || 400 }
+      );
     }
 
-    try {
-      const url = new URL(originalUrl);
-      if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-        return NextResponse.json({ error: 'A URL deve iniciar com http:// ou https://.' }, { status: 400 });
-      }
-    } catch {
-      return NextResponse.json({ error: 'A URL informada é inválida.' }, { status: 400 });
-    }
 
     let slug = '';
 
